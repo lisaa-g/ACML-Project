@@ -58,7 +58,8 @@ model = KerasRegressor(build_fn=create_model, verbose=0)
 
 # Define the grid search parameters
 optimizer = ['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam']
-param_grid = dict(optimizer=optimizer)
+epochs = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+param_grid = dict(optimizer=optimizer, epochs=epochs)
 
 # Conduct Grid Search
 grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1, cv=3)
@@ -74,7 +75,7 @@ for mean, stdev, param in zip(means, stds, params):
 
 # Train the model using the best parameters found
 model = create_model(optimizer=grid_result.best_params_['optimizer'])
-history = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=50, batch_size=32)
+history = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=grid_result.best_params_['epochs'], batch_size=32)
 
 # Plot the training history
 plt.figure(figsize=(12, 4))
