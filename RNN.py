@@ -18,6 +18,7 @@ dataset = dataset.dropna(axis=1, how='all')
 # Convert date and time to datetime format and set it as index
 dataset['DateTime'] = pd.to_datetime(dataset['Date'] + ' ' + dataset['Time'], format='%d/%m/%Y %H.%M.%S')
 dataset = dataset.set_index('DateTime')
+print(dataset.columns)
 
 # Drop the original date and time columns
 dataset = dataset.drop(['Date', 'Time'], axis=1)
