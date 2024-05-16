@@ -68,6 +68,9 @@ regressor.compile(optimizer='adam', loss='mean_squared_error')
 # Fitting the Recurrent Neural Network to the Training set
 history = regressor.fit(X_train, y_train, batch_size=32, epochs=50)
 
+# Compute the test loss
+test_loss = regressor.evaluate(X_test, y_test)
+
 # Getting the predicted CO(GT) value
 predicted_CO_GT = regressor.predict(X_test)
 predicted_CO_GT = scaler.inverse_transform(predicted_CO_GT)
@@ -81,14 +84,16 @@ plt.ylabel('CO(GT) Value')
 plt.legend()
 plt.show()
 
-# Plot the training loss
+# Plot the training and test loss
 plt.figure(figsize=(12, 4))
 plt.plot(history.history['loss'], label='Train Loss')
+plt.axhline(test_loss, color='red', label='Test Loss') 
 plt.title('Model loss')
 plt.ylabel('Loss')
 plt.xlabel('Epoch')
 plt.legend(loc='upper right')
 plt.show()
 
-# Print out the final training loss
+# Print out the final training and test loss
 print(f"Final training loss: {history.history['loss'][-1]}")
+print(f"Test loss: {test_loss}")
