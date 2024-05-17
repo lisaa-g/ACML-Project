@@ -85,7 +85,6 @@ plt.legend()
 plt.show()
 
 # Plot the training and test loss
-plt.figure(figsize=(12, 4))
 plt.plot(history.history['loss'], label='Train Loss')
 plt.axhline(test_loss, color='red', label='Test Loss') 
 plt.title('Model loss')

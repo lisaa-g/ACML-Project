@@ -5,7 +5,7 @@ from keras.models import Sequential
 from keras.layers import SimpleRNN, Dense
 import matplotlib.pyplot as plt
 import numpy as np
-from keras.wrappers.scikit_learn import KerasRegressor
+from scikeras.wrappers import KerasRegressor
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
