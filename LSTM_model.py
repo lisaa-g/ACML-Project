@@ -64,52 +64,28 @@ def create_sequences(data, target, sequence_length):
 X_train_sequences, y_train_sequences = create_sequences(X_train, y_train, sequence_length)
 X_test_sequences, y_test_sequences = create_sequences(X_test, y_test, sequence_length)
 
-# Recurrent Neural Network Layers
-regressor = Sequential()
-regressor.add(LSTM(units=64, return_sequences=True, input_shape=(sequence_length, X_train_sequences.shape[2]), kernel_regularizer=regularizers.l2(0.01)))
-regressor.add(Dropout(0.3))
-regressor.add(LSTM(units=64, return_sequences=True, kernel_regularizer=regularizers.l2(0.01)))
-regressor.add(Dropout(0.3))
-regressor.add(LSTM(units=64, kernel_regularizer=regularizers.l2(0.01)))
-regressor.add(Dropout(0.3))
-regressor.add(Dense(units=1, kernel_regularizer=regularizers.l2(0.01)))
+# Create the LSTM model
+model = Sequential()
+model.add(LSTM(units=50, return_sequences=True, input_shape=(X_train_sequences.shape[1], X_train_sequences.shape[2]), kernel_regularizer=regularizers.l2(0.001)))
+model.add(Dropout(0.2))
+model.add(LSTM(units=50, kernel_regularizer=regularizers.l2(0.001)))
+model.add(Dropout(0.2))
+model.add(Dense(1, activation='relu'))
 
-# Compiling the Recurrent Neural Network
-regressor.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+# Compile the model
+model.compile(loss='mean_squared_error', optimizer='adam')
 
 # Define early stopping
 early_stopping = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
 
-# Fitting the Recurrent Neural Network to the Training set
-history = regressor.fit(X_train_sequences, y_train_sequences, batch_size=32, epochs=20, validation_split=0.2, callbacks=[early_stopping])
+# Fit the model
+history = model.fit(X_train_sequences, y_train_sequences, epochs=50, validation_data=(X_test_sequences, y_test_sequences), shuffle=False, callbacks=[early_stopping])
 
-# Compute the test loss
-test_loss = regressor.evaluate(X_test_sequences, y_test_sequences)
-
-# Getting the predicted CO(GT) value
-predicted_CO_GT = regressor.predict(X_test_sequences)
-predicted_CO_GT = scaler_y.inverse_transform(predicted_CO_GT)
-
-# Graphs for predicted values
-plt.plot(scaler_y.inverse_transform(y_test_sequences.reshape(-1, 1)), color='red', label='Real CO(GT) Value')
-plt.plot(predicted_CO_GT, color='blue', label='Predicted CO(GT) Value')
-plt.title('CO(GT) Value Prediction')
-plt.xlabel('Days')
-plt.ylabel('CO(GT) Value')
-plt.legend()
-plt.show()
-
-# Plot the training and test loss
-plt.plot(history.history['loss'], label='Train Loss')
-plt.plot(history.history['val_loss'], label='Validation Loss')
-# plt.axhline(test_loss, color='red', linestyle='--', label='Test Loss')
-plt.title('Model Loss')
+# Plot train and validation loss
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('Model Train vs Validation Loss')
 plt.ylabel('Loss')
 plt.xlabel('Epoch')
-plt.legend(loc='upper right')
+plt.legend(['Train', 'Validation'], loc='upper right')
 plt.show()
-
-# Print out the final training and test loss
-print(f"Final training loss: {history.history['loss'][-1]}")
-print(f"Final validation loss: {history.history['val_loss'][-1]}")
-print(f"Test loss: {test_loss}")
