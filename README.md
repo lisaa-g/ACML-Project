@@ -9,8 +9,8 @@
 
 ### Dependencies
 ```
-- tensorflow version 2.16.1
-- keras version 3.2.0
-- scikit-learn version 1.4.2
-- scikeras version 0.13.0
+- tensorflow version: 2.16.1
+- keras version: 3.2.0
+- scikit-learn version: 1.4.2
+- scikeras version: 0.13.0
 ```
